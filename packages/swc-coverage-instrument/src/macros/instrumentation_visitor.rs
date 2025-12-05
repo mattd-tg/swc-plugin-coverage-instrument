@@ -117,6 +117,8 @@ macro_rules! instrumentation_visitor {
                             ..BlockStmt::dummy()
                         }));
                     }
+                    #[cfg(swc_ast_unknown)]
+                    _ => panic!("unknown node"),
                 },
             }
             self.on_exit(old);

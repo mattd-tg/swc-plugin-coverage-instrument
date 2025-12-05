@@ -23,6 +23,8 @@ pub fn should_ignore_file<C: Clone + Comments>(comments: &C, program: &Program) 
     let pos = match &program {
         Program::Module(module) => module.span,
         Program::Script(script) => script.span,
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     };
 
     let validate_comments = |comments: &Option<Vec<Comment>>| {
