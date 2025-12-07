@@ -159,6 +159,8 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for CoverageVisitor<C, S> {
             let (old, _ignore_current) = match &mut item {
                 ModuleItem::ModuleDecl(decl) => self.on_enter(decl),
                 ModuleItem::Stmt(stmt) => self.on_enter(stmt),
+                #[cfg(swc_ast_unknown)]
+                _ => continue,
             };
 
             // https://github.com/kwonoj/swc-plugin-coverage-instrument/issues/277
