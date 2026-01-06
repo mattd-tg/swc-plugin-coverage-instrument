@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Add WASM target
+        run: rustup target add wasm32-wasip1
+
+      - name: Build WASM plugin (release)
+        run: cargo build -p swc-plugin-coverage --target wasm32-wasip1 --release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/wasm32-wasip1/release/swc_plugin_coverage.wasm
+          generate_release_notes: true
